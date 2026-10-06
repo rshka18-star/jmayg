@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#071320">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+  <title>JMA Motor Finance</title>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <img src="logo.png" class="brand-logo" alt="JMA Motor Service">
+      <div class="brand-text">
+        <strong>JMA</strong>
+        <span>MOTOR FINANCE</span>
+      </div>
+      <button id="exportBtn" class="round-btn" title="Export data">⇩</button>
+    </header>
+
+    <section class="hero">
+      <div class="glow glow-a"></div>
+      <div class="glow glow-b"></div>
+      <div class="wallet">€</div>
+    </section>
+
+    <section class="quick-grid">
+      <button class="money-card income" id="addIncomeBtn">
+        <span class="card-title">Income</span>
+        <span class="sign">+</span>
+        <strong id="todayIncomeTop">€0.00</strong>
+        <small>Tap to add</small>
+      </button>
+
+      <button class="money-card expense" id="addExpenseBtn">
+        <span class="card-title">Expenses</span>
+        <span class="sign">−</span>
+        <strong id="todayExpenseTop">€0.00</strong>
+        <small>Tap to add</small>
+      </button>
+    </section>
+
+    <section class="balance-card">
+      <div class="wallet-icon">▣</div>
+      <div>
+        <span>Current Balance</span>
+        <strong id="currentBalance">€0.00</strong>
+      </div>
+      <button id="toggleBalanceBtn" class="eye-btn" aria-label="Hide balance">◉</button>
+    </section>
+
+    <nav class="tabs" aria-label="Summary range">
+      <button class="tab active" data-tab="day">Day</button>
+      <button class="tab" data-tab="week">Week</button>
+      <button class="tab" data-tab="month">Month</button>
+    </nav>
+
+    <section id="dayPanel" class="panel active">
+      <div class="summary-card">
+        <div class="section-heading">
+          <span class="mini-icon">▦</span>
+          <div>
+            <strong>Today Summary</strong>
+            <small id="todayDateLabel"></small>
+          </div>
+        </div>
+        <div class="summary-row"><span class="income-text">↑ Income</span><strong id="dayIncome">€0.00</strong></div>
+        <div class="summary-row"><span class="expense-text">↓ Expenses</span><strong id="dayExpense">€0.00</strong></div>
+        <div class="summary-row total"><span>▥ Balance</span><strong id="dayBalance">€0.00</strong></div>
+      </div>
+
+      <div class="history-card">
+        <div class="section-heading">
+          <span class="mini-icon">◷</span>
+          <strong>Today Transactions</strong>
+        </div>
+        <div id="todayTransactions" class="transactions"></div>
+      </div>
+    </section>
+
+    <section id="weekPanel" class="panel">
+      <div class="summary-card locked-card">
+        <div class="section-heading">
+          <span class="mini-icon">▦</span>
+          <div>
+            <strong>Weekly Closing</strong>
+            <small id="weekRangeLabel"></small>
+          </div>
+        </div>
+        <p class="lock-note" id="weekLockNote"></p>
+        <div class="summary-row"><span class="income-text">↑ Income</span><strong id="weekIncome">—</strong></div>
+        <div class="summary-row"><span class="expense-text">↓ Expenses</span><strong id="weekExpense">—</strong></div>
+        <div class="summary-row total"><span>▥ Final Total</span><strong id="weekBalance">—</strong></div>
+      </div>
+      <div class="history-card">
+        <div class="section-heading"><span class="mini-icon">✓</span><strong>Closed Weeks</strong></div>
+        <div id="closedWeeks" class="archive-list"></div>
+      </div>
+    </section>
+
+    <section id="monthPanel" class="panel">
+      <div class="summary-card locked-card">
+        <div class="section-heading">
+          <span class="mini-icon">▦</span>
+          <div>
+            <strong>Monthly Closing</strong>
+            <small id="monthRangeLabel"></small>
+          </div>
+        </div>
+        <p class="lock-note" id="monthLockNote"></p>
+        <div class="summary-row"><span class="income-text">↑ Income</span><strong id="monthIncome">—</strong></div>
+        <div class="summary-row"><span class="expense-text">↓ Expenses</span><strong id="monthExpense">—</strong></div>
+        <div class="summary-row total"><span>▥ Final Total</span><strong id="monthBalance">—</strong></div>
+      </div>
+      <div class="history-card">
+        <div class="section-heading"><span class="mini-icon">✓</span><strong>Closed Months</strong></div>
+        <div id="closedMonths" class="archive-list"></div>
+      </div>
+    </section>
+
+    <footer class="bottom-nav">
+      <button class="active">⌂<span>Home</span></button>
+      <button id="historyJumpBtn">◷<span>History</span></button>
+      <button id="resetBtn">⚙<span>Settings</span></button>
+    </footer>
+  </main>
+
+  <dialog id="entryDialog">
+    <form method="dialog" id="entryForm">
+      <div class="dialog-head">
+        <div>
+          <small id="entryTypeSmall">Add</small>
+          <h2 id="entryTitle">Income</h2>
+        </div>
+        <button value="cancel" class="dialog-x" aria-label="Close">×</button>
+      </div>
+
+      <label>Amount (€)
+        <input id="amountInput" type="number" min="0.01" step="0.01" inputmode="decimal" required placeholder="0.00">
+      </label>
+
+      <label>Description
+        <input id="noteInput" type="text" maxlength="60" placeholder="e.g. Service payment">
+      </label>
+
+      <div class="dialog-grid">
+        <label>Date
+          <input id="dateInput" type="date" required>
+        </label>
+        <label>Time
+          <input id="timeInput" type="time" required>
+        </label>
+      </div>
+
+      <button id="saveEntryBtn" class="primary-btn" value="default">Save transaction</button>
+    </form>
+  </dialog>
+
+  <dialog id="settingsDialog">
+    <form method="dialog">
+      <div class="dialog-head">
+        <h2>Settings</h2>
+        <button value="cancel" class="dialog-x">×</button>
+      </div>
+      <p class="settings-copy">Your records are stored on this device. Weekly totals close after Sunday. Monthly totals close after the last day of the month.</p>
+      <button type="button" id="clearAllBtn" class="danger-btn">Clear all data</button>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
